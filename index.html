@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stacked Video Layout</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+  <select id="dropdown-menu" onchange="navigateTo(this)">
+    <option value="index.html">FOOD</option>
+    <option value="#about">- About FOOD</option>
+    <option value="#contact">- Contact FOOD</option>
+    <option value="#news">- FOOD News</option>
+  </select>
+  <div id="video-container">
+    <!-- Video sections will be dynamically inserted here -->
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
