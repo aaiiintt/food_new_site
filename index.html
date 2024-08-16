@@ -1,23 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stacked Video Layout</title>
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stacked Video Layout</title>
+
+    <!-- Inline critical CSS for initial render -->
+    <style>
+        /* Reset */
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: auto;
+            background-color: #000;
+            color: #ddd;
+            font-family: 'Courier Prime', monospace;
+            position: relative;
+        }
+
+        /* Container for videos */
+        #video-container {
+            scroll-snap-type: y mandatory;
+            overflow-y: auto;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Individual video section */
+        .video-section {
+            scroll-snap-align: start;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        /* Wrapper to position video elements */
+        .video-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Style for video elements */
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #000;
+        }
+
+        /* Container for title and description */
+        .video-title-description-container {
+            position: absolute;
+            bottom: 200px;
+            left: 30px;
+            width: 50vw;
+        }
+
+        /* Styles for title and description */
+        .video-title,
+        .video-description {
+            display: inline;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #ddd;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+            font-size: x-large;
+            font-weight: normal;
+        }
+
+        .video-title {
+            margin: 0;
+        }
+
+        .video-description {
+            margin: 0;
+            display: block;
+            margin-top: 10px;
+        }
+
+        /* Dropdown menu styles */
+        #dropdown-menu {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-family: 'Courier Prime', monospace;
+            font-size: x-large;
+            color: #000;
+            background-color: #fff;
+            z-index: 1000;
+        }
+
+        #dropdown-menu option {
+            font-family: 'Courier Prime', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .video-title-description-container {
+                bottom: 200px;
+                left: 30px;
+                width: calc(100% - 60px);
+            }
+
+            .video-title,
+            .video-description {
+                font-size: large;
+            }
+        }
+    </style>
+
+    <!-- Preload Google Fonts -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap">
+    </noscript>
+
+    <!-- Load non-critical CSS asynchronously -->
+    <link rel="stylesheet" href="styles.css" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="styles.css">
+    </noscript>
+
+    <!-- HLS.js for streaming video support -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest" defer></script>
 </head>
+
 <body>
-  <select id="dropdown-menu" onchange="navigateTo(this)">
-    <option value="index.html">FOOD</option>
-    <option value="#about">- About FOOD</option>
-    <option value="#contact">- Contact FOOD</option>
-    <option value="#news">- FOOD News</option>
-  </select>
-  <div id="video-container">
-    <!-- Video sections will be dynamically inserted here -->
-  </div>
-  <script src="script.js"></script>
+    <!-- Dropdown menu for navigation -->
+    <select id="dropdown-menu" onchange="navigateTo(this)">
+        <option value="index.html">FOOD</option>
+        <option value="#about">- About FOOD</option>
+        <option value="#contact">- Contact FOOD</option>
+        <option value="#news">- FOOD News</option>
+    </select>
+
+    <!-- Container for dynamically inserted videos -->
+    <div id="video-container"></div>
+
+    <!-- Inline critical JS for initial functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('video-container');
+            const baseUrl = 'https://customer-9ysf8sb0845vh87k.cloudflarestream.com';
+
+            // Fetch video data from the JSON file
+            fetch('videos.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    createVideoSections(data);
+                })
+                .catch(error => {
+                    console.error('Error loading videos:', error);
+                });
+
+            // Create video sections with lazy loading
+            function createVideoSections(videos) {
+                videos.forEach((videoData, index) => {
+                    const section = document.createElement('div');
+                    section.classList.add('video-section');
+
+                    const videoWrapper = document.createElement('div');
+                    videoWrapper.classList.add('video-wrapper');
+
+                    const video = document.createElement('video');
+                    video.classList.add('video');
+                    video.playsInline = true;
+                    video.autoplay = true;
+                    video.loop = true;
+                    video.muted = true;
+                    video.controls = false;
+
+                    const titleDescriptionContainer = document.createElement('div');
+                    titleDescriptionContainer.classList.add('video-title-description-container');
+
+                    const title = document.createElement('h2');
+                    title.classList.add('video-title');
+                    title.innerText = videoData.title;
+
+                    const description = document.createElement('p');
+                    description.classList.add('video-description');
+                    description.innerText = videoData.description;
+
+                    titleDescriptionContainer.appendChild(title);
+                    titleDescriptionContainer.appendChild(description);
+
+                    videoWrapper.appendChild(video);
+                    section.appendChild(videoWrapper);
+                    section.appendChild(titleDescriptionContainer);
+                    container.appendChild(section);
+
+                    // Lazy load video using Intersection Observer
+                    const observer = new IntersectionObserver(entries => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const videoUrl = `${baseUrl}/${videoData.id}/manifest/video.m3u8`;
+                                if (Hls.isSupported()) {
+                                    const hls = new Hls();
+                                    hls.loadSource(videoUrl);
+                                    hls.attachMedia(video);
+                                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                                    video.src = videoUrl;
+                                }
+                                observer.unobserve(section);
+                            }
+                        });
+                    }, { rootMargin: '0px 0px 200px 0px' });
+
+                    observer.observe(section);
+                });
+            }
+        });
+
+        // Function to handle navigation based on dropdown selection
+        function navigateTo(select) {
+            const url = select.value;
+            if (url !== '') {
+                window.location.href = url;
+            }
+        }
+    </script>
 </body>
+
 </html>

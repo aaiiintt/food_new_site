@@ -44,7 +44,7 @@ video {
 
 .video-title-description-container {
   position: absolute;
-  bottom: 150px;
+  bottom: 100px;
   left: 30px;
   width: 50vw;
 }
@@ -86,7 +86,7 @@ video {
 
 @media (max-width: 768px) {
   .video-title-description-container {
-    bottom: 150px;
+    bottom: 100px;
     left: 30px;
     width: calc(100% - 60px); /* Adjust for small screen sizes */
   }
