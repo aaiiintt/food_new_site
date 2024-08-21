@@ -33,12 +33,18 @@ function createNewsSections(newsItems) {
 
         const section = document.createElement('div');
         section.classList.add('news-section');
+        if (index === 0) section.classList.add('first-section'); // Adds class to the first section
 
         const content = document.createElement('div');
         content.classList.add('news-content');
+
+        // Format the date
+        const date = new Date(item.Date);
+        const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
         content.innerHTML = `
-            <span class="news-date">${item.date}:</span>
-            <span class="news-text">${item.content}</span>
+            <span class="news-date">${formattedDate}:</span>
+            <span class="news-text">${item.Content}</span>
         `;
 
         section.appendChild(content);

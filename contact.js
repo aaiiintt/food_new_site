@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  fetchData('data/about.csv', createAboutSections);
+  fetchData('data/contact.csv', createContactSections);
 });
 
 function fetchData(url, callback) {
@@ -17,8 +17,8 @@ function fetchData(url, callback) {
   });
 }
 
-function createAboutSections(sections) {
-  const container = document.getElementById('about-container');
+function createContactSections(sections) {
+  const container = document.getElementById('contact-container');
   console.log('Received data:', sections);
 
   if (!Array.isArray(sections) || sections.length === 0) {
@@ -28,13 +28,13 @@ function createAboutSections(sections) {
 
   container.innerHTML = ''; // Clear existing content
 
-  sections.forEach((section) => {
+  sections.forEach((section, index) => {
       console.log('Processing section:', section);
 
       const sectionElement = document.createElement('div');
-      sectionElement.classList.add('about-section');
+      sectionElement.classList.add('contact-section');
 
-      const titleElement = document.createElement('p');
+      const titleElement = document.createElement('h2');
       titleElement.textContent = section.title || 'No Title';
 
       const contentElement = document.createElement('p');
