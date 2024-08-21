@@ -9,18 +9,19 @@
     <noscript>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap">
     </noscript>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-        <select
-          id="dropdown-menu"
-          onchange="navigateTo(this)"
-          aria-label="Navigation Menu"
-        >
-          <option value="index.html">FOOD</option>
-          <option value="about.html"> - About FOOD</option>
-          <option value="contact.html"> - Contact FOOD</option>
-          <option value="news.html" selected> - FOOD News</option>
-        </select>
+    <select
+      id="dropdown-menu"
+      onchange="navigateTo(this)"
+      aria-label="Navigation Menu"
+    >
+      <option value="index.html">FOOD</option>
+      <option value="about.html">- About FOOD</option>
+      <option value="contact.html">- Contact FOOD</option>
+      <option value="news.html" selected>- FOOD News</option>
+    </select>
     <div id="news-container"></div>
     <script src="news.js"></script>
 </body>

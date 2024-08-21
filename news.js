@@ -1,14 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetchData('data/news.json', createNewsSections);
+    fetchData('data/news.csv', createNewsSections);
 
     function createNewsSections(newsItems) {
+        console.log("Parsed news items:", newsItems); // Log parsed news items
         const container = document.getElementById('news-container');
+        if (newsItems.length === 0) {
+            console.error('No news items found.');
+            return;
+        }
+
         const fragment = document.createDocumentFragment();
 
         newsItems.forEach((item, index) => {
+            if (!item.date || !item.content) {
+                console.error('Missing date or content:', item);
+                return;
+            }
+
             const section = document.createElement('div');
             section.classList.add('news-section');
-            if (index === 0) section.classList.add('first-section'); // Adds class to first section
+            if (index === 0) section.classList.add('first-section'); // Adds class to the first section
             const content = document.createElement('div');
             content.classList.add('news-content');
             content.innerHTML = `
@@ -24,10 +35,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function fetchData(url, callback) {
-    fetch(url)
-      .then(response => response.ok ? response.json() : Promise.reject('Network error'))
-      .then(data => callback(data))
-      .catch(console.error);
+    Papa.parse(url, {
+      download: true,
+      header: true,
+      complete: function(results) {
+        console.log("Parsed data:", results.data); // Log parsed data
+        callback(results.data);
+      },
+      error: function(error) {
+        console.error('Error parsing CSV:', error);
+      }
+    });
 }
 
 function navigateTo(select) {
