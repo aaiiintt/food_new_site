@@ -1,98 +1,163 @@
-/* Basic reset */
-body,
-html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: auto;
-  background-color: #000;
-  color: #ddd;
-  font-family: 'Courier Prime', monospace;
-  position: relative;
+/* Reset and base styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: auto;
+    background-color: #000;
+    color: #ddd;
+    font-family: 'Courier Prime', monospace;
+    position: relative;
+    scroll-behavior: smooth;
+    letter-spacing: -0.01em;
 }
 
-#video-container {
-  scroll-snap-type: y mandatory;
-  overflow-y: auto;
-  height: 100vh;
-  width: 100vw;
-}
-
-.video-section {
-  scroll-snap-align: start;
-  height: 100vh;
-  width: 100vw;
-  position: relative;
-}
-
-.video-wrapper {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #000;
-}
-
-.video-title-description-container {
-  position: absolute;
-  bottom: 100px;
-  left: 30px;
-  width: 50vw;
-}
-
-.video-title,
-.video-description {
-  display: inline;  /* Make the background behind actual text */
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #ddd;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-  font-size: x-large;
-  font-weight: normal;
-}
-
-.video-title {
-  margin: 0;
-}
-
-.video-description {
-  margin: 0;
-  display: block;
-  margin-top: 10px; /* Adds a line break-like space */
-}
-
+/* Dropdown menu styles */
 #dropdown-menu {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  font-family: 'Courier Prime', monospace;
-  font-size: x-large;
-  color: #000;
-  background-color: #fff;
-  z-index: 1000;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-family: 'Courier Prime', monospace;
+    font-size: x-large;
+    color: #000;
+    background-color: #fff;
+    z-index: 1000;
 }
 
 #dropdown-menu option {
-  font-family: 'Courier Prime', monospace;
+    font-family: 'Courier Prime', monospace;
+    letter-spacing: -0.01em;
 }
 
-@media (max-width: 768px) {
-  .video-title-description-container {
+/* Style for links */
+a {
+    color: #ffffff; /* Font color */
+    text-decoration: underline;
+    position: relative;
+}
+
+/* Video container styles */
+#video-container {
+    scroll-snap-type: y mandatory;
+    overflow-y: auto;
+    height: 100vh;
+    width: 100vw;
+}
+
+.video-section {
+    scroll-snap-align: start;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+}
+
+.video-wrapper, .video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #000;
+}
+
+.video-title-description-container {
+    position: absolute;
     bottom: 100px;
     left: 30px;
-    width: calc(100% - 60px); /* Adjust for small screen sizes */
-  }
-
-  .video-title,
-  .video-description {
+    width: 50vw;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #ddd;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+    font-weight: normal;
+    letter-spacing: -0.01em;
     font-size: x-large;
-  }
+}
+
+.video-title {
+    text-decoration: underline;
+    margin: 0;
+}
+
+.video-description {
+    margin: 0;
+    margin-top: 10px; /* Adds a line break-like space */
+}
+
+/* News-specific styles for mobile screens */
+@media (max-width: 768px) {
+    #news-container {
+        width: 90%; /* Content takes 80% of the screen width */
+        padding: 30px;
+        box-sizing: border-box;
+        margin-left: 0; /* Align content to the left */
+    }
+}
+
+/* News-specific styles for larger screens */
+@media (min-width: 769px) {
+    #news-container {
+        width: 60%; /* Content takes 60% of the screen width */
+        max-width: 800px; /* Limit the maximum width */
+        padding: 30px;
+        box-sizing: border-box;
+        margin-left: 0; /* Align content to the left */
+    }
+}
+
+.news-section.first-section {
+    padding-top: 130px;
+}
+
+.news-section {
+    padding-top: 30px;
+    padding-bottom: 30px;
+    box-sizing: border-box;
+}
+
+.news-date, .news-text {
+    font-family: 'Courier Prime', monospace;
+    font-size: x-large;
+}
+
+.news-date {
+    margin-right: 5px;
+}
+
+/* About styles for mobile screens */
+@media (max-width: 768px) {
+    #about-container {
+        width: 90%; /* Content takes 80% of the screen width */
+        padding: 30px;
+        box-sizing: border-box;
+        margin-left: 0; /* Align content to the left */
+        font-size: x-large;
+    }
+}
+
+/* About-specific styles for larger screens */
+@media (min-width: 769px) {
+    #about-container {
+        width: 50%; /* Content takes 50% of the screen width */
+        padding: 30px;
+        padding-top: 130px;
+        box-sizing: border-box;
+        margin-left: 0; /* Align content to the left */
+        font-size: x-large;
+    }
+}
+
+
+/* Style for links */
+a {
+    color: #ffffff; /* Font color for links */
+    text-decoration: underline;
+    position: relative;
+}
+
+/* Hover effects for links */
+a:hover {
+    color: #ffcc00; /* Change color on hover */
+    text-decoration: none; /* Remove underline on hover */
 }

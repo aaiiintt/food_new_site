@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit News</title>
+    <!-- Google Font: Courier Prime -->
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Include SortableJS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+    <style>
+        body {
+            font-family: 'Courier Prime', monospace;
+            background-color: #000;
+            color: #fff;
+            margin: 50px;
+        }
+        .sortable-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .form-container {
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            background-color: #555;
+            width: 80%;
+            margin-left: 0;
+            flex-direction: column;
+        }
+        .form-container.existing-entry {
+            background-color: #ddd;
+            color: #000;
+            flex-direction: row;
+        }
+        .drag-handle {
+            background-color: transparent;
+            color: #fff;
+            padding: 16px;
+            cursor: move;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            height: 100%;
+            width: 48px; /* Matching width to buttons */
+        }
+        .date-input,
+        .content-textarea {
+            background-color: #fff;
+            color: #000;
+            padding: 16px;
+            font-family: 'Courier Prime', monospace;
+            border: none;
+            width: calc(100% - 32px);
+            margin-bottom: 16px;
+        }
+        .content-textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        .form-container a {
+            text-decoration: underline;
+            margin-bottom: 8px; /* Vertical spacing between buttons */
+            cursor: pointer;
+        }
+        .form-container a.save-link {
+            color: #fff; /* White for the new section */
+        }
+        .form-container.existing-entry a {
+            color: #0000EE; /* Classic internet blue */
+        }
+        .form-container a:hover {
+            color: #FF0000; /* Red on hover for emphasis */
+        }
+        h1, h2 {
+            color: #fff;
+            letter-spacing: -0.1em;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- New News Entry -->
+    <h1 class="text-2xl">New News Entry</h1>
+    <div class="form-container new-entry">
+        <input type="date" id="newDate" class="date-input">
+        <textarea id="newContent" placeholder="New news content" class="content-textarea"></textarea>
+        <a href="#" onclick="addNewEntry()" class="save-link">SAVE</a>
+    </div>
+
+    <!-- Edit / Reorder News Entries -->
+    <h2 class="text-2xl">Edit / Reorder News Entries</h2>
+    <div id="newsList" class="sortable-list"></div>
+
+    <!-- Pagination Controls -->
+    <div class="flex justify-between mt-4" style="width: 80%; margin-left: 0;">
+        <button id="prevPage" class="bg-gray-500 text-white p-2 rounded">Previous</button>
+        <button id="nextPage" class="bg-gray-500 text-white p-2 rounded">Next</button>
+    </div>
+
+    <script>
+        let newsData = [];
+        let currentPage = 0;
+        const itemsPerPage = 20;
+
+        fetch('data/news.json')
+            .then(response => response.json())
+            .then(data => {
+                newsData = data;
+                renderPage();
+            });
+
+        function renderPage() {
+            const newsList = document.getElementById('newsList');
+            const start = currentPage * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageData = newsData.slice(start, end);
+
+            newsList.innerHTML = pageData.map((news, index) => `
+                <div class="form-container existing-entry" data-index="${start + index}">
+                    <div class="drag-handle">☰</div>
+                    <div style="flex-grow: 1;">
+                        <input type="date" id="date-${start + index}" value="${news.date}" class="date-input">
+                        <textarea id="content-${start + index}" class="content-textarea">${news.content}</textarea>
+                    </div>
+                    <div class="flex flex-col justify-between">
+                        <a href="#" onclick="saveEntry(${start + index})">SAVE</a>
+                        <a href="#" onclick="deleteEntry(${start + index})" class="text-red-500">DEL</a>
+                    </div>
+                </div>
+            `).join('');
+
+            // Initialize sortable (unchanged)
+            new Sortable(newsList, {
+                handle: '.drag-handle',
+                animation: 150,
+                onEnd: function (evt) {
+                    const itemEl = evt.item;
+                    const oldIndex = evt.oldIndex + start;
+                    const newIndex = evt.newIndex + start;
+
+                    newsData.splice(newIndex, 0, newsData.splice(oldIndex, 1)[0]);
+                    saveToServer();
+                }
+            });
+        }
+
+        function encodeContent(input) {
+            return input
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;")
+                .replace(/\//g, "&#47;")
+                .replace(/\\/g, "&#92;")
+                .replace(/!/g, "&#33;")
+                .replace(/:/g, "&#58;")
+                .replace(/=/g, "&#61;")
+                .replace(/\n/g, "<br>");  // Line breaks converted to <br> tags
+        }
+
+        function addNewEntry() {
+            const newDate = document.getElementById('newDate').value.trim();
+            const newContent = document.getElementById('newContent').value.trim();
+
+            if (newDate && newContent) {
+                const encodedContent = encodeContent(newContent);
+                newsData.unshift({ date: newDate, content: encodedContent });
+                saveToServer();
+            } else {
+                alert('Please fill out both fields.');
+            }
+        }
+
+        function saveEntry(index) {
+            const updatedContent = document.getElementById(`content-${index}`).value;
+            const encodedContent = encodeContent(updatedContent);
+
+            newsData[index].date = document.getElementById(`date-${index}`).value;
+            newsData[index].content = encodedContent;
+            saveToServer();
+        }
+
+        function deleteEntry(index) {
+            if (confirm('Are you sure you want to delete this entry?')) {
+                newsData.splice(index, 1);
+                saveToServer();
+            }
+        }
+
+        function saveToServer() {
+            fetch('data/news.json', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newsData)
+            })
+            .then(() => renderPage())
+            .catch(error => console.error('Error saving news data:', error));
+        }
+    </script>
+</body>
+</html>

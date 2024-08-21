@@ -1,0 +1,17 @@
+{
+  "name": "foodnew",
+  "version": "1.0.0",
+  "description": "new food website - backend microcms",
+  "main": "admin.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "fs": "^0.0.1-security"
+  }
+}
