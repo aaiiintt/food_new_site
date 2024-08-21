@@ -149,6 +149,31 @@ a {
 }
 
 
+
+/* About styles for mobile screens */
+@media (max-width: 768px) {
+    #contact-container {
+        width: 90%; /* Content takes 80% of the screen width */
+        padding: 30px;
+        box-sizing: border-box;
+        margin-left: 0; /* Align content to the left */
+        font-size: x-large;
+    }
+}
+
+/* About-specific styles for larger screens */
+@media (min-width: 769px) {
+    #contact-container {
+        width: 50%; /* Content takes 50% of the screen width */
+        padding: 30px;
+        padding-top: 130px;
+        box-sizing: border-box;
+        margin-left: 0; /* Align content to the left */
+        font-size: x-large;
+    }
+}
+
+
 /* Style for links */
 a {
     color: #ffffff; /* Font color for links */

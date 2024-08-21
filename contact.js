@@ -34,7 +34,7 @@ function createContactSections(sections) {
       const sectionElement = document.createElement('div');
       sectionElement.classList.add('contact-section');
 
-      const titleElement = document.createElement('h2');
+      const titleElement = document.createElement('o');
       titleElement.textContent = section.title || 'No Title';
 
       const contentElement = document.createElement('p');
